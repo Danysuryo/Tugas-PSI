@@ -1,22 +1,20 @@
 <?php
+// 1. Mengambil data variabel lingkungan otomatis dari server Railway
+// Jika berjalan di laptop Anda (local), otomatis beralih ke 'localhost'
+$host = getenv('PGHOST') ?: 'localhost';
+$user = getenv('PGUSER') ?: 'postgres';
+$pass = getenv('PGPASSWORD') ?: 'password_postgresql_lokal_kamu';
+$db   = getenv('PGDATABASE') ?: 'sisfoKlinik';
+$port = getenv('PGPORT') ?: '5432';
 
-$host = "localhost";
-$port = "5432";
-$dbname = "SIsfoKlinik";
-$username = "postgres";
-$password = "Danysuryo&14";
+// 2. Menyusun string koneksi khusus untuk PostgreSQL
+$connection_string = "host=$host port=$port dbname=$db user=$user password=$pass";
 
-try {
-    $conn = new PDO(
-        "pgsql:host=$host;port=$port;dbname=$dbname",
-        $username,
-        $password
-    );
+// 3. Membuka koneksi ke database
+$koneksi = pg_connect($connection_string);
 
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-} catch (PDOException $e) {
-
-    die("Koneksi gagal : " . $e->getMessage());
-
+// 4. Cek apakah koneksi berhasil atau gagal
+if (!$koneksi) {
+    die("Koneksi ke database gagal dilakukan: " . pg_last_error());
 }
+?>
